@@ -1,113 +1,88 @@
 import React, { Component } from "react";
 // import logo from "./logo.svg";
 import "./App.css";
-import Dashboard from "./Dashboard";
 
-const profiles = [
-  {
-    id: 1,
-    userID: "1",
-    favoriteMovieID: "1",
-  },
-  {
-    id: 2,
-    userID: "2",
-    favoriteMovieID: "1",
-  },
-  {
-    id: 3,
-    userID: "4",
-    favoriteMovieID: "5",
-  },
-  {
-    id: 4,
-    userID: "5",
-    favoriteMovieID: "2",
-  },
-  {
-    id: 5,
-    userID: "3",
-    favoriteMovieID: "5",
-  },
-  {
-    id: 6,
-    userID: "6",
-    favoriteMovieID: "4",
-  },
-];
-
-const users = {
-  1: {
-    id: 1,
-    name: "Jane Jones",
-    userName: "coder",
-  },
-  2: {
-    id: 2,
-    name: "Matthew Johnson",
-    userName: "mpage",
-  },
-  3: {
-    id: 3,
-    name: "Autumn Green",
-    userName: "user123",
-  },
-  4: {
-    id: 3,
-    name: "John Doe",
-    userName: "user123",
-  },
-  5: {
-    id: 5,
-    name: "Lauren Carlson",
-    userName: "user123",
-  },
-  6: {
-    id: 6,
-    name: "Nicholas Lain",
-    userName: "user123",
-  },
-};
-
-const movies = {
-  1: {
-    id: 1,
-    name: "Planet Earth",
-  },
-  2: {
-    id: 2,
-    name: "Selma",
-  },
-  3: {
-    id: 3,
-    name: "Million Dollar Baby",
-  },
-  4: {
-    id: 4,
-    name: "Forrest Gump",
-  },
-  5: {
-    id: 5,
-    name: "Get Out",
-  },
-};
+// const value1 = Math.floor(Math.random() * 100);
+// const value2 = Math.floor(Math.random() * 100);
+// const value3 = Math.floor(Math.random() * 100);
+// const proposedAnswer = Math.floor(Math.random() * 3) + value1 + value2 + value3;
+// const numQuestions = 0;
+// const numCorrect = 0;
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.usersByMovie = {};
+  state = {
+    value1: Math.floor(Math.random() * 100),
+    value2: Math.floor(Math.random() * 100),
+    value3: Math.floor(Math.random() * 100),
+    proposedAnswer: 0,
+    numQuestions: 0,
+    numCorrect: 0,
+  };
 
-    profiles.forEach((profile) => {
-      const movieID = profile.favoriteMovieID;
-
-      if (this.usersByMovie[movieID]) {
-        this.usersByMovie[movieID].push(profile.userID);
-      } else {
-        this.usersByMovie[movieID] = [profile.userID];
-      }
+  componentDidMount() {
+    this.setState({
+      proposedAnswer:
+        Math.floor(Math.random() * 3) +
+        this.state.value1 +
+        this.state.value2 +
+        this.state.value3,
     });
-    console.log(this.usersByMovie);
+    console.log("hello action from mount");
   }
+
+  componentDidUpdate(action) {
+    let NewNumCorrect = 0;
+    const actualSum = this.state.value1 + this.state.value2 + this.state.value3;
+    if (
+      (actualSum === this.state.proposedAnswer && action) ||
+      (actualSum !== this.state.proposedAnswer && !action)
+    ) {
+      NewNumCorrect = 1;
+    }
+    const oldNumQuestions = this.state.numQuestions;
+
+    // this.setState(currState => ({
+    //   value1: Math.floor(Math.random() * 100),
+    //   value2: Math.floor(Math.random() * 100),
+    //   value3: Math.floor(Math.random() * 100),
+    //   proposedAnswer:
+    //     Math.floor(Math.random() * 3) +
+    //     this.state.value1 +
+    //     this.state.value2 +
+    //     this.state.value3,
+    //   numQuestions: currentState.numQuestions + 1,
+    //   numCorrect: currentState.numCorrect + NewNumCorrect
+    // }));
+
+    console.log("hello action from update", action);
+  }
+
+  handleAnswer = (action) => {
+    console.log("hello action", action);
+
+    let NewNumCorrect = this.state.numCorrect;
+    const actualSum = this.state.value1 + this.state.value2 + this.state.value3;
+    // if (
+    //   (actualSum === this.state.proposedAnswer && action) ||
+    //   (actualSum !== this.state.proposedAnswer && !action)
+    // ) {
+    //   this.NewNumCorrect = NewNumCorrect + 1;
+    // }
+    const oldNumQuestions = this.state.numQuestions;
+
+    // this.setState({
+    //   value1: Math.floor(Math.random() * 100),
+    //   value2: Math.floor(Math.random() * 100),
+    //   value3: Math.floor(Math.random() * 100),
+    //   proposedAnswer:
+    //     Math.floor(Math.random() * 3) +
+    //     this.state.value1 +
+    //     this.state.value2 +
+    //     this.state.value3,
+    //   numQuestions: oldNumQuestions + 1,
+    //   numCorrect: NewNumCorrect,
+    // });
+  };
 
   render() {
     return (
@@ -116,13 +91,19 @@ class App extends Component {
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
           <h1 className="App-title">ReactND - Coding Practice</h1>
         </header>
-        <h2>How Popular is Your Favorite Movie?</h2>
-        <Dashboard
-          profiles={profiles}
-          movies={movies}
-          users={users}
-          usersByMovie={this.usersByMovie}
-        />
+        <div className="game">
+          <h2>Mental Math</h2>
+          <div className="equation">
+            <p className="text">{`${this.state.value1} + ${
+              this.state.value2
+            } + ${this.state.value3} = ${this.state.proposedAnswer}`}</p>
+          </div>
+          <button onClick={this.handleAnswer(true)}>True</button>
+          <button onClick={this.handleAnswer(false)}>False</button>
+          <p className="text">
+            Your Score: {this.state.numCorrect}/{this.state.numQuestions}
+          </p>
+        </div>
       </div>
     );
   }
